@@ -1,4 +1,4 @@
-import { ChakraProvider, CSSReset } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { theme } from './theme'
 import Layout from './components/Layout'
@@ -11,7 +11,6 @@ import VideoCaptioning from './pages/VideoCaptioning'
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      <CSSReset />
       <Router>
         <Layout>
           <Routes>
