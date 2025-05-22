@@ -37,10 +37,6 @@ AIgnite is a comprehensive suite of AI-powered tools designed to make the web mo
 ### Installation
 
 1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/aignite.git
-cd aignite
-```
 
 2. Install dependencies:
 ```bash
