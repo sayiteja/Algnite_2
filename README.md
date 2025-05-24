@@ -1,153 +1,168 @@
-# Algnite - AI-Powered Web Accessibility Tools
+# AIgnite - Web Accessibility Platform
 
-Algnite is a comprehensive web accessibility platform that leverages AI to make websites more accessible for users with disabilities. The platform includes features for image description generation, video captioning, voice navigation, and accessibility scanning.
+AIgnite is a comprehensive web accessibility platform that uses AI to make the web more accessible for everyone.
 
 ## Features
 
-- **Image Description Generation**: Automatically generates alt text and detailed descriptions for images
-- **Video Captioning**: Creates accurate captions for video content
-- **Voice Navigation**: Chrome extension for voice-controlled website navigation
-- **Accessibility Scanner**: Comprehensive website accessibility analysis
-- **User Authentication**: Secure user management with JWT
-- **Customizable Preferences**: User-specific accessibility settings
+### ✅ Tested and Working
+1. **Authentication System**
+   - Login/Logout functionality
+   - Protected routes
+   - Session management
 
-## Tech Stack
+2. **Navigation**
+   - Responsive navigation bar
+   - Mobile-friendly menu
+   - User profile menu with logout option
 
-### Frontend
-- React with TypeScript
-- Chakra UI for components
-- React Router for navigation
-- Axios for API calls
+3. **Accessibility Scanner**
+   - URL input and validation
+   - Website scanning functionality
+   - Results display with severity levels
+   - WCAG compliance information
+   - Code suggestions for fixes
 
-### Backend
-- Node.js with Express
-- TypeScript
-- MongoDB with Mongoose
-- JWT for authentication
-- Google Cloud Vision API
-- Google Cloud Speech-to-Text API
+4. **Image Description**
+   - Image upload functionality
+   - AI-generated alt text
+   - Detailed image descriptions
+   - Confidence scores
+   - Copy to clipboard feature
 
-### Chrome Extension
-- TypeScript
-- Chrome Extension Manifest V3
-- Web Speech API
+5. **Video Captioning**
+   - Video upload functionality
+   - AI-generated captions
+   - Multiple format support (SRT, WebVTT, TXT)
+   - Download options
+   - Copy to clipboard feature
 
-## Prerequisites
+### 🚧 In Progress
+1. **Voice Navigation**
+   - Basic voice command recognition
+   - Command history display
+   - Browser compatibility detection
+   - Chrome extension development
+   - Need to implement actual navigation actions
 
-- Node.js (v14 or higher)
-- MongoDB Atlas account
-- Google Cloud account with Vision and Speech-to-Text APIs enabled
+2. **Chrome Extension**
+   - Basic structure created
+   - Manifest file configured
+   - Need to implement:
+     - Voice command processing
+     - Element highlighting
+     - Cross-page persistence
+     - Settings management
+
+### 📝 TODO List
+
+#### High Priority
+1. **Voice Navigation**
+   - [ ] Implement actual navigation actions for voice commands
+   - [ ] Add support for more complex commands
+   - [ ] Improve error handling and feedback
+   - [ ] Add voice command suggestions
+   - [ ] Implement command history persistence
+
+2. **Chrome Extension**
+   - [ ] Complete voice command processing
+   - [ ] Implement element highlighting
+   - [ ] Add settings management
+   - [ ] Create extension popup UI
+   - [ ] Add keyboard shortcuts
+   - [ ] Publish to Chrome Web Store
+
+3. **Backend Integration**
+   - [ ] Set up proper API endpoints
+   - [ ] Implement rate limiting
+   - [ ] Add error handling
+   - [ ] Set up proper authentication
+   - [ ] Add request validation
+
+#### Medium Priority
+1. **UI/UX Improvements**
+   - [ ] Add loading states for all actions
+   - [ ] Improve error messages
+   - [ ] Add success notifications
+   - [ ] Implement proper form validation
+   - [ ] Add tooltips for features
+
+2. **Testing**
+   - [ ] Add unit tests
+   - [ ] Add integration tests
+   - [ ] Add end-to-end tests
+   - [ ] Set up CI/CD pipeline
+   - [ ] Add test coverage reporting
+
+3. **Documentation**
+   - [ ] Add API documentation
+   - [ ] Create user guide
+   - [ ] Add developer documentation
+   - [ ] Create contribution guidelines
+   - [ ] Add setup instructions
+
+#### Low Priority
+1. **Additional Features**
+   - [ ] Add dark mode support
+   - [ ] Implement user preferences
+   - [ ] Add analytics
+   - [ ] Create dashboard
+   - [ ] Add export functionality
+
+2. **Performance**
+   - [ ] Optimize image processing
+   - [ ] Improve video processing
+   - [ ] Add caching
+   - [ ] Optimize API calls
+   - [ ] Add lazy loading
+
+## Getting Started
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
 - Chrome browser (for extension development)
 
-## Environment Setup
-
-1. Clone the repository:
+### Installation
+1. Clone the repository
 ```bash
-git clone https://github.com/sayiteja/Algnite_2.git
-cd algnite
+git clone https://github.com/yourusername/aignite.git
+cd aignite
 ```
 
-2. Install dependencies:
+2. Install dependencies
 ```bash
-# Install frontend dependencies
-npm install
-
-# Install backend dependencies
-cd backend
-npm install
-
-# Install extension dependencies
-cd ../extension
 npm install
 ```
 
-3. Set up environment variables:
-
-Create `.env` files in both frontend and backend directories:
-
-Backend `.env`:
-```
-PORT=5000
-MONGODB_URI=your_mongodb_atlas_connection_string
-JWT_SECRET=your_secure_jwt_secret
-GOOGLE_APPLICATION_CREDENTIALS=path_to_google_credentials.json
-```
-
-Frontend `.env`:
-```
-VITE_API_URL=http://localhost:5000
-```
-
-## Development
-
-1. Start the backend server:
+3. Set up environment variables
 ```bash
-cd backend
-npm run dev
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
-2. Start the frontend development server:
+4. Start the development server
 ```bash
-cd frontend
-npm run dev
+npm run dev:frontend
 ```
 
-3. Build the Chrome extension:
-```bash
-cd extension
-npm run build
-```
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login
-- `GET /api/auth/profile` - Get user profile
-- `PATCH /api/auth/profile` - Update user profile
-
-### Accessibility
-- `POST /api/accessibility/scan` - Scan website for accessibility issues
-- `POST /api/accessibility/image` - Generate image description
-- `POST /api/accessibility/video` - Generate video captions
-
-## Security Considerations
-
-1. **Environment Variables**
-   - Never commit `.env` files
-   - Use strong, unique secrets for JWT
-   - Keep API keys secure
-
-2. **API Security**
-   - All routes are protected with JWT authentication
-   - Rate limiting implemented
-   - CORS configured for security
-
-3. **Data Protection**
-   - Passwords are hashed using bcrypt
-   - Sensitive data is encrypted
-   - Input validation on all endpoints
-
-## Deployment
-
-1. **Backend Deployment**
-   - Build the TypeScript code: `npm run build`
-   - Set up environment variables on the server
-   - Use PM2 for process management
-
-2. **Frontend Deployment**
-   - Build the React app: `npm run build`
-   - Deploy to your preferred hosting service
-
-3. **Chrome Extension**
-   - Build the extension: `npm run build`
-   - Package and submit to Chrome Web Store
+### Development
+- Frontend runs on http://localhost:5173
+- Backend runs on http://localhost:5001
+- Extension can be loaded from the `extension` directory
 
 ## Contributing
-
 1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+- [Chakra UI](https://chakra-ui.com/) for the component library
+- [React](https://reactjs.org/) for the frontend framework
+- [Vite](https://vitejs.dev/) for the build tool
+- [TypeScript](https://www.typescriptlang.org/) for type safety
 
