@@ -15,14 +15,26 @@ import {
   AlertTitle,
   AlertDescription,
   Spinner,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Badge,
+  Link,
 } from '@chakra-ui/react'
 import { useState } from 'react'
+import { accessibilityApi } from '../services/api'
 
 interface ScanResult {
   type: 'error' | 'warning' | 'info'
   message: string
   element?: string
   suggestion?: string
+  code?: string
+  impact?: 'critical' | 'serious' | 'moderate' | 'minor'
+  wcag?: string
+  url?: string
 }
 
 const AccessibilityScanner = () => {
@@ -47,42 +59,43 @@ const AccessibilityScanner = () => {
     setResults([])
 
     try {
-      // TODO: Implement actual scanning logic with AI
-      // This is a mock implementation
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      const scanResults = await accessibilityApi.scanWebsite(url)
+      setResults(scanResults)
       
-      const mockResults: ScanResult[] = [
-        {
-          type: 'error',
-          message: 'Missing alt text on images',
-          element: 'img',
-          suggestion: 'Add descriptive alt text to all images',
-        },
-        {
-          type: 'warning',
-          message: 'Low color contrast detected',
-          element: 'text',
-          suggestion: 'Increase contrast ratio to meet WCAG 2.1 standards',
-        },
-        {
-          type: 'info',
-          message: 'Consider adding ARIA labels',
-          element: 'button',
-          suggestion: 'Add aria-label attributes to interactive elements',
-        },
-      ]
-
-      setResults(mockResults)
+      if (scanResults.length === 0) {
+        toast({
+          title: 'Success',
+          description: 'No accessibility issues found!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        })
+      }
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to scan the website',
+        description: error instanceof Error ? error.message : 'Failed to scan the website',
         status: 'error',
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       })
     } finally {
       setIsScanning(false)
+    }
+  }
+
+  const getImpactColor = (impact: string) => {
+    switch (impact) {
+      case 'critical':
+        return 'red'
+      case 'serious':
+        return 'orange'
+      case 'moderate':
+        return 'yellow'
+      case 'minor':
+        return 'blue'
+      default:
+        return 'gray'
     }
   }
 
@@ -124,29 +137,71 @@ const AccessibilityScanner = () => {
 
         {results.length > 0 && (
           <VStack spacing={4} align="stretch">
-            {results.map((result, index) => (
-              <Alert
-                key={index}
-                status={result.type === 'error' ? 'error' : result.type === 'warning' ? 'warning' : 'info'}
-                variant="left-accent"
-              >
-                <AlertIcon />
-                <Box>
-                  <AlertTitle>{result.message}</AlertTitle>
-                  {result.element && (
-                    <AlertDescription>
-                      Element: {result.element}
-                      {result.suggestion && (
-                        <>
-                          <br />
-                          Suggestion: {result.suggestion}
-                        </>
+            <Accordion allowMultiple>
+              {results.map((result, index) => (
+                <AccordionItem key={index}>
+                  <h2>
+                    <AccordionButton>
+                      <Box flex="1" textAlign="left">
+                        <Alert
+                          status={result.type === 'error' ? 'error' : result.type === 'warning' ? 'warning' : 'info'}
+                          variant="left-accent"
+                        >
+                          <AlertIcon />
+                          <Box flex="1">
+                            <AlertTitle>{result.message}</AlertTitle>
+                            {result.impact && (
+                              <Badge colorScheme={getImpactColor(result.impact)} ml={2}>
+                                {result.impact}
+                              </Badge>
+                            )}
+                            {result.wcag && (
+                              <Badge colorScheme="purple" ml={2}>
+                                WCAG: {result.wcag}
+                              </Badge>
+                            )}
+                          </Box>
+                        </Alert>
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    <Stack spacing={3}>
+                      {result.element && (
+                        <Text>
+                          <strong>Element:</strong> {result.element}
+                        </Text>
                       )}
-                    </AlertDescription>
-                  )}
-                </Box>
-              </Alert>
-            ))}
+                      {result.suggestion && (
+                        <Text>
+                          <strong>Suggestion:</strong> {result.suggestion}
+                        </Text>
+                      )}
+                      {result.code && (
+                        <Box>
+                          <Text fontWeight="bold">Code Example:</Text>
+                          <Box
+                            as="pre"
+                            p={3}
+                            bg="gray.100"
+                            borderRadius="md"
+                            overflowX="auto"
+                          >
+                            <code>{result.code}</code>
+                          </Box>
+                        </Box>
+                      )}
+                      {result.url && (
+                        <Link href={result.url} color="brand.500" isExternal>
+                          Learn more about this issue
+                        </Link>
+                      )}
+                    </Stack>
+                  </AccordionPanel>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </VStack>
         )}
       </Stack>

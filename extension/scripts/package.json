@@ -1,0 +1,13 @@
+{
+  "name": "algnite-voice-navigator-icons",
+  "version": "1.0.0",
+  "description": "Icon generation and build scripts for Algnite Voice Navigator",
+  "scripts": {
+    "generate-icons": "node generate-icons.js",
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "archiver": "^5.3.1"
+  }
+} 

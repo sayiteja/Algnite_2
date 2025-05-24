@@ -12,17 +12,29 @@ import {
   Textarea,
   Icon,
   Flex,
+  Badge,
+  useClipboard,
+  Tooltip,
 } from '@chakra-ui/react'
 import { useState, useRef } from 'react'
-import { FaUpload, FaSpinner } from 'react-icons/fa'
+import { FaUpload, FaSpinner, FaCopy, FaCheck } from 'react-icons/fa'
+import { accessibilityApi } from '../services/api'
+
+interface ImageDescription {
+  altText: string
+  detailedDescription: string
+  confidence: number
+  tags: string[]
+}
 
 const ImageDescription = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const [description, setDescription] = useState('')
+  const [description, setDescription] = useState<ImageDescription | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const toast = useToast()
+  const { hasCopied, onCopy } = useClipboard(description?.altText || '')
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -42,34 +54,36 @@ const ImageDescription = () => {
     const reader = new FileReader()
     reader.onload = (e) => {
       setSelectedImage(e.target?.result as string)
-      setDescription('')
+      setDescription(null)
     }
     reader.readAsDataURL(file)
   }
 
   const generateDescription = async () => {
-    if (!selectedImage) return
+    if (!selectedImage || !fileInputRef.current?.files?.[0]) return
 
     setIsGenerating(true)
     setProgress(0)
 
     try {
-      // TODO: Implement actual AI image description generation
-      // This is a mock implementation
-      for (let i = 0; i <= 100; i += 10) {
-        await new Promise(resolve => setTimeout(resolve, 200))
-        setProgress(i)
-      }
-
-      const mockDescription = `This image shows a beautiful landscape with mountains in the background and a serene lake in the foreground. The scene is captured during sunset, with warm orange and purple hues painting the sky. The water reflects the sky's colors, creating a mirror-like effect.`
-
-      setDescription(mockDescription)
+      const result = await accessibilityApi.generateImageDescription(
+        fileInputRef.current.files[0]
+      )
+      setDescription(result)
+      
+      toast({
+        title: 'Success',
+        description: 'Image description generated successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to generate image description',
+        description: error instanceof Error ? error.message : 'Failed to generate description',
         status: 'error',
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       })
     } finally {
@@ -138,33 +152,75 @@ const ImageDescription = () => {
           )}
 
           {description && (
-            <Box w="full" maxW="500px">
-              <Text fontWeight="bold" mb={2}>
-                Generated Description:
-              </Text>
-              <Textarea
-                value={description}
-                readOnly
-                rows={6}
-                bg="gray.50"
-                _hover={{ bg: 'gray.100' }}
-              />
-              <Flex justify="flex-end" mt={2}>
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    navigator.clipboard.writeText(description)
-                    toast({
-                      title: 'Copied',
-                      description: 'Description copied to clipboard',
-                      status: 'success',
-                      duration: 2000,
-                    })
-                  }}
-                >
-                  Copy to Clipboard
-                </Button>
-              </Flex>
+            <Box w="full" maxW="500px" p={6} borderWidth={1} borderRadius="lg">
+              <Stack spacing={4}>
+                <Flex justify="space-between" align="center">
+                  <Heading size="md">Generated Description</Heading>
+                  <Tooltip label={hasCopied ? 'Copied!' : 'Copy to clipboard'}>
+                    <Button
+                      size="sm"
+                      leftIcon={<Icon as={hasCopied ? FaCheck : FaCopy} />}
+                      onClick={onCopy}
+                    >
+                      {hasCopied ? 'Copied' : 'Copy'}
+                    </Button>
+                  </Tooltip>
+                </Flex>
+
+                <Box>
+                  <Text fontWeight="bold" mb={2}>
+                    Alt Text:
+                  </Text>
+                  <Textarea
+                    value={description.altText}
+                    readOnly
+                    rows={2}
+                    bg="gray.50"
+                  />
+                </Box>
+
+                <Box>
+                  <Text fontWeight="bold" mb={2}>
+                    Detailed Description:
+                  </Text>
+                  <Textarea
+                    value={description.detailedDescription}
+                    readOnly
+                    rows={4}
+                    bg="gray.50"
+                  />
+                </Box>
+
+                <Box>
+                  <Text fontWeight="bold" mb={2}>
+                    Confidence: {Math.round(description.confidence * 100)}%
+                  </Text>
+                  <Progress
+                    value={description.confidence * 100}
+                    size="sm"
+                    colorScheme={
+                      description.confidence > 0.8
+                        ? 'green'
+                        : description.confidence > 0.6
+                        ? 'yellow'
+                        : 'red'
+                    }
+                  />
+                </Box>
+
+                <Box>
+                  <Text fontWeight="bold" mb={2}>
+                    Tags:
+                  </Text>
+                  <Flex wrap="wrap" gap={2}>
+                    {description.tags.map((tag, index) => (
+                      <Badge key={index} colorScheme="blue">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </Flex>
+                </Box>
+              </Stack>
             </Box>
           )}
         </VStack>

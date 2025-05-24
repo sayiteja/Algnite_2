@@ -17,23 +17,45 @@ import {
   Tr,
   Th,
   Td,
+  Badge,
+  Select,
+  useClipboard,
+  Tooltip,
 } from '@chakra-ui/react'
 import { useState, useRef } from 'react'
-import { FaUpload, FaSpinner, FaDownload } from 'react-icons/fa'
+import { FaUpload, FaSpinner, FaDownload, FaCopy, FaCheck } from 'react-icons/fa'
+import { accessibilityApi } from '../services/api'
 
 interface Caption {
   startTime: string
   endTime: string
   text: string
+  confidence: number
 }
+
+interface CaptionFormat {
+  value: string
+  label: string
+  extension: string
+}
+
+const captionFormats: CaptionFormat[] = [
+  { value: 'srt', label: 'SubRip (SRT)', extension: 'srt' },
+  { value: 'vtt', label: 'WebVTT', extension: 'vtt' },
+  { value: 'txt', label: 'Plain Text', extension: 'txt' },
+]
 
 const VideoCaptioning = () => {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
   const [captions, setCaptions] = useState<Caption[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [selectedFormat, setSelectedFormat] = useState<CaptionFormat>(captionFormats[0])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const toast = useToast()
+  const { hasCopied, onCopy } = useClipboard(
+    captions.map((c) => `${c.startTime} --> ${c.endTime}\n${c.text}`).join('\n\n')
+  )
 
   const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -59,44 +81,30 @@ const VideoCaptioning = () => {
   }
 
   const generateCaptions = async () => {
-    if (!selectedVideo) return
+    if (!selectedVideo || !fileInputRef.current?.files?.[0]) return
 
     setIsGenerating(true)
     setProgress(0)
 
     try {
-      // TODO: Implement actual AI video captioning
-      // This is a mock implementation
-      for (let i = 0; i <= 100; i += 10) {
-        await new Promise(resolve => setTimeout(resolve, 200))
-        setProgress(i)
-      }
-
-      const mockCaptions: Caption[] = [
-        {
-          startTime: '00:00:00',
-          endTime: '00:00:05',
-          text: 'Welcome to this video about web accessibility.',
-        },
-        {
-          startTime: '00:00:05',
-          endTime: '00:00:10',
-          text: 'Today we will discuss how to make websites more inclusive.',
-        },
-        {
-          startTime: '00:00:10',
-          endTime: '00:00:15',
-          text: 'We will cover topics like screen readers and keyboard navigation.',
-        },
-      ]
-
-      setCaptions(mockCaptions)
+      const result = await accessibilityApi.generateVideoCaptions(
+        fileInputRef.current.files[0]
+      )
+      setCaptions(result)
+      
+      toast({
+        title: 'Success',
+        description: 'Video captions generated successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to generate captions',
+        description: error instanceof Error ? error.message : 'Failed to generate captions',
         status: 'error',
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       })
     } finally {
@@ -104,20 +112,35 @@ const VideoCaptioning = () => {
     }
   }
 
-  const downloadSRT = () => {
+  const downloadCaptions = () => {
     if (captions.length === 0) return
 
-    const srtContent = captions
-      .map((caption, index) => {
-        return `${index + 1}\n${caption.startTime} --> ${caption.endTime}\n${caption.text}\n`
-      })
-      .join('\n')
+    let content = ''
+    switch (selectedFormat.value) {
+      case 'srt':
+        content = captions
+          .map((caption, index) => {
+            return `${index + 1}\n${caption.startTime} --> ${caption.endTime}\n${caption.text}\n`
+          })
+          .join('\n')
+        break
+      case 'vtt':
+        content = `WEBVTT\n\n${captions
+          .map((caption) => {
+            return `${caption.startTime} --> ${caption.endTime}\n${caption.text}\n`
+          })
+          .join('\n')}`
+        break
+      case 'txt':
+        content = captions.map((caption) => caption.text).join('\n')
+        break
+    }
 
-    const blob = new Blob([srtContent], { type: 'text/plain' })
+    const blob = new Blob([content], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'captions.srt'
+    a.download = `captions.${selectedFormat.extension}`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -191,20 +214,46 @@ const VideoCaptioning = () => {
           {captions.length > 0 && (
             <Box w="full" maxW="800px">
               <Flex justify="space-between" align="center" mb={4}>
-                <Text fontWeight="bold">Generated Captions:</Text>
-                <Button
-                  leftIcon={<Icon as={FaDownload} />}
-                  onClick={downloadSRT}
-                  size="sm"
-                >
-                  Download SRT
-                </Button>
+                <Stack direction="row" spacing={4}>
+                  <Select
+                    value={selectedFormat.value}
+                    onChange={(e) =>
+                      setSelectedFormat(
+                        captionFormats.find((f) => f.value === e.target.value) ||
+                          captionFormats[0]
+                      )
+                    }
+                    w="200px"
+                  >
+                    {captionFormats.map((format) => (
+                      <option key={format.value} value={format.value}>
+                        {format.label}
+                      </option>
+                    ))}
+                  </Select>
+                  <Button
+                    leftIcon={<Icon as={FaDownload} />}
+                    onClick={downloadCaptions}
+                    colorScheme="brand"
+                  >
+                    Download
+                  </Button>
+                  <Tooltip label={hasCopied ? 'Copied!' : 'Copy to clipboard'}>
+                    <Button
+                      leftIcon={<Icon as={hasCopied ? FaCheck : FaCopy} />}
+                      onClick={onCopy}
+                    >
+                      {hasCopied ? 'Copied' : 'Copy'}
+                    </Button>
+                  </Tooltip>
+                </Stack>
               </Flex>
               <Table variant="simple">
                 <Thead>
                   <Tr>
                     <Th>Time</Th>
                     <Th>Text</Th>
+                    <Th>Confidence</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -214,6 +263,19 @@ const VideoCaptioning = () => {
                         {caption.startTime} - {caption.endTime}
                       </Td>
                       <Td>{caption.text}</Td>
+                      <Td>
+                        <Badge
+                          colorScheme={
+                            caption.confidence > 0.8
+                              ? 'green'
+                              : caption.confidence > 0.6
+                              ? 'yellow'
+                              : 'red'
+                          }
+                        >
+                          {Math.round(caption.confidence * 100)}%
+                        </Badge>
+                      </Td>
                     </Tr>
                   ))}
                 </Tbody>

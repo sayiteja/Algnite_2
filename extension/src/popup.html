@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Algnite Voice Navigator</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Voice Navigator</h1>
+      <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span class="status-text">Listening...</span>
+      </div>
+    </header>
+
+    <main>
+      <div class="controls">
+        <button id="toggleVoice" class="primary-button">
+          <span class="icon">🎤</span>
+          <span class="text">Start Voice Control</span>
+        </button>
+        
+        <button id="toggleHighlight" class="secondary-button">
+          <span class="icon">👁️</span>
+          <span class="text">Toggle Element Highlight</span>
+        </button>
+      </div>
+
+      <div class="settings">
+        <h2>Settings</h2>
+        <div class="setting-item">
+          <label for="voiceSpeed">Voice Speed</label>
+          <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.1" value="1">
+        </div>
+        <div class="setting-item">
+          <label for="highlightColor">Highlight Color</label>
+          <input type="color" id="highlightColor" value="#4A90E2">
+        </div>
+      </div>
+
+      <div class="commands">
+        <h2>Available Commands</h2>
+        <ul>
+          <li>"Click [element]"</li>
+          <li>"Scroll [up/down]"</li>
+          <li>"Go to [link]"</li>
+          <li>"Read [element]"</li>
+          <li>"Stop"</li>
+        </ul>
+      </div>
+    </main>
+
+    <footer>
+      <p>Press Ctrl+Shift+Space to toggle voice control</p>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 

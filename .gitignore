@@ -1,24 +1,94 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Google Cloud credentials
+imposing-voyage-460611-m7-339ec839b7c7.json
+*-credentials.json
+*-key.json
+*.pem
+*.key
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Debug files
+.debug/
+debug.log
+
+# Production build files
+build/
+dist/
+out/
+
+# Cache directories
+.cache/
+.npm/
+.eslintcache
+.stylelintcache
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Next.js build output
+.next
+out
+
+# Production build files
+build/
+dist/
+out/
+
+# Debug files
+.debug/
+debug.log
