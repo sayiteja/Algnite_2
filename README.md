@@ -43,7 +43,7 @@ Algnite is a comprehensive web accessibility platform that leverages AI to make 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/algnite.git
+git clone https://github.com/sayiteja/Algnite_2.git
 cd algnite
 ```
 
@@ -151,12 +151,3 @@ npm run build
 4. Push to the branch
 5. Create a Pull Request
 
-## Support
-
-For support, email support@algnite.com or create an issue in the repository.
-
-## Acknowledgments
-
-- Google Cloud Platform for AI services
-- MongoDB Atlas for database hosting
-- Open source community for various tools and libraries
