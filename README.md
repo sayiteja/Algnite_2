@@ -15,6 +15,23 @@ AIgnite is a comprehensive web accessibility platform that uses AI to make the w
    - Mobile-friendly menu
    - User profile menu with logout option
 
+### 🚧 In Progress
+1. **Voice Navigation**
+   - Basic voice command recognition
+   - Command history display
+   - Browser compatibility detection
+   - Chrome extension development
+   - Need to implement actual navigation actions
+
+2. **Chrome Extension**
+   - Basic structure created
+   - Manifest file configured
+   - Need to implement:
+     - Voice command processing
+     - Element highlighting
+     - Cross-page persistence
+     - Settings management
+
 3. **Accessibility Scanner**
    - URL input and validation
    - Website scanning functionality
@@ -35,23 +52,6 @@ AIgnite is a comprehensive web accessibility platform that uses AI to make the w
    - Multiple format support (SRT, WebVTT, TXT)
    - Download options
    - Copy to clipboard feature
-
-### 🚧 In Progress
-1. **Voice Navigation**
-   - Basic voice command recognition
-   - Command history display
-   - Browser compatibility detection
-   - Chrome extension development
-   - Need to implement actual navigation actions
-
-2. **Chrome Extension**
-   - Basic structure created
-   - Manifest file configured
-   - Need to implement:
-     - Voice command processing
-     - Element highlighting
-     - Cross-page persistence
-     - Settings management
 
 ### 📝 TODO List
 
